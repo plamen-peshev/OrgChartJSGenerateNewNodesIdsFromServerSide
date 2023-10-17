@@ -1,0 +1,69 @@
+﻿@using OrgChartJSGenerateNewNodesIdsFromServerSide
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://balkan.app/js/OrgChart.js"></script>
+
+    <style>
+
+        /*CSS*/
+        html, body {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        tree {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="tree"></div>
+
+    <video width="600" autoplay controls style="position: fixed; left: 0; top: 0;">
+        <source src="screen-capture.webm" type="video/webm">
+    </video>
+
+    <script>
+        var chart = new OrgChart(document.getElementById("tree"), {
+            nodeBinding: {
+                field_0: "name",
+                field_1: "id"
+            },
+            enableSearch: false,
+            nodeMenu: {
+                add: { text: 'Add new node' },
+            }
+        });
+
+        chart.onAddNode(function(args){
+            var that = this;
+            fetch('/home/update', {
+                method: 'POST',
+                body: JSON.stringify(args),
+                headers: {'Content-type': 'application/json; charset=UTF-8'}
+            }).then(response => response.json()).then(function(serverData){
+                var clientData = that._get(args.data.id);//gets the client data as reference object
+                clientData.id = serverData.id;//replace the cleint id with generated id from the server
+                that.draw();//refresh the ui
+            });
+        });
+
+        chart.load([
+                { id: 1, name: "Denny Curtis" },
+                { id: 2, pid: 1, name: "Ashley Barnett" },
+                { id: 3, pid: 1, name: "Caden Ellison" }
+            ]);
+    </script>
+</body>
+</html>
