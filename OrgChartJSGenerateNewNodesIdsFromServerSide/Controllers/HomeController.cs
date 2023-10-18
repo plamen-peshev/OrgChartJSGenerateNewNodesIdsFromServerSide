@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace OrgChartJSGenerateNewNodesIdsFromServerSide.Controllers
 {
@@ -11,9 +12,11 @@ namespace OrgChartJSGenerateNewNodesIdsFromServerSide.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update(string id, string pid)
+        public IActionResult Update([FromBody] JsonElement args)
         {
             System.Threading.Thread.Sleep(1500);
+            var clientId = args.GetProperty("data").GetProperty("id").ToString();
+
 
             Random rnd = new Random();
             int serverId = rnd.Next();//Generate id from the server it could be SQL server
