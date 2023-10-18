@@ -17,14 +17,12 @@ namespace OrgChartJSGenerateNewNodesIdsFromServerSide.Controllers
             System.Threading.Thread.Sleep(1500);
             var clientId = args.GetProperty("data").GetProperty("id").ToString();
 
-
             Random rnd = new Random();
             int serverId = rnd.Next();//Generate id from the server it could be SQL server
 
-            return Json(new
-            {
-                id = serverId
-            });
+            var old_new_ids = new Dictionary<string, string>();
+            old_new_ids.Add(clientId, serverId.ToString());
+            return Json(old_new_ids);
         }
     }
 }
